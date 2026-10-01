@@ -7,17 +7,21 @@
   "type": "module",
   "main": "/dist/src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx ./src/main.ts",
+    "db:migrate": "tsx ./kysely/migrator.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.3",
-    "install": "^0.13.0",
-    "npm": "^12.2.0",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "kysely": "^0.29.6",
+    "pg": "^8.23.1"
   }
 }

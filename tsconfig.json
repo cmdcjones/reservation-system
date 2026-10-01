@@ -7,11 +7,13 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "esnext",
+    "module": "preserve",
     "target": "esnext",
     // For nodejs:
     "lib": ["esnext"],
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     // and npm install -D @types/node
 
     // Other Outputs
@@ -39,7 +41,9 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
   },
-  "include": ["./src/*"],
+  "include": ["./src/*", "./kysely/*"],
   "exclude": ["./dist/*/**", "./node_modules/*/**"],
 }
