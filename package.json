@@ -1,0 +1,23 @@
+{
+  "name": "reservation-system",
+  "version": "0.0.1",
+  "description": "",
+  "license": "MIT",
+  "author": "Dominique Chin-Jones",
+  "type": "module",
+  "main": "/dist/src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.3",
+    "install": "^0.13.0",
+    "npm": "^12.2.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
