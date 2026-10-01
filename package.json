@@ -9,7 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx ./src/main.ts",
-    "db:migrate": "tsx ./kysely/migrator.ts"
+    "db:migrate": "tsx ./kysely/migrator.ts",
+    "db:reset": "tsx ./kysely/migrator.ts reset",
+    "db:create-migration": "tsx ./kysely/create-migration.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

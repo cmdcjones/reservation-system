@@ -1,4 +1,4 @@
-import {
+import type {
   ColumnType,
   Generated,
   Insertable,
@@ -30,6 +30,8 @@ export interface EventTable {
   name: string;
   venue: string;
   created_at: ColumnType<Date, string | null, never>;
+  updated_at: UpdatedAt;
+  deleted_at: DeletedAt;
 }
 
 export type Event = Selectable<EventTable>;
