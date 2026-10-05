@@ -73,6 +73,7 @@ export interface TicketTypeTable {
   event_id: number;
   name: string;
   created_at: CreatedAt;
+  updated_at: UpdatedAt;
 }
 
 export type TicketType = Selectable<TicketTypeTable>;
