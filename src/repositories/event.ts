@@ -42,11 +42,13 @@ export const eventRepository = {
       .executeTakeFirstOrThrow();
   },
 
-  async deleteEvent(id: number, executor: TxOrDb): Promise<void> {
-    await executor
+  async deleteEvent(id: number, executor: TxOrDb): Promise<EventRow> {
+    return await executor
       .updateTable("event")
       .set({ deleted_at: new Date() })
       .where("id", "=", id)
-      .execute();
+      .where("deleted_at", "is", null)
+      .returning(eventColumns)
+      .executeTakeFirstOrThrow();
   },
 };
