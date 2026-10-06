@@ -22,7 +22,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("ticket_type_id", "integer", (col) =>
       col.references("ticket_type.id").unique().notNull(),
     )
-    .addColumn("reserved", "integer", (col) => col.notNull())
+    .addColumn("reserved", "integer", (col) =>
+      col.notNull().check(sql`reserved > 0 AND reserved <= capacity`),
+    )
     .addColumn("capacity", "integer", (col) => col.notNull())
     .execute();
 
@@ -60,7 +62,9 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.defaultTo(sql`now()`).notNull(),
     )
     .addColumn("updated_at", "timestamp")
-    .addColumn("deleted_at", "timestamp")
+    .addColumn("expires_at", "timestamp", (col) =>
+      col.defaultTo(sql`now() + INTERVAL '15 minutes'`).notNull(),
+    )
     .execute();
 }
 
