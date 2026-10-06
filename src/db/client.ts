@@ -1,21 +1,30 @@
-import { type Database } from "./schema"; // this is the Database interface we defined earlier
+import { type Database } from "./schema";
 import { Pool } from "pg";
-import { ControlledTransaction, Kysely, PostgresDialect } from "kysely";
+import { Kysely, PostgresDialect, Transaction } from "kysely";
 import { config } from "../config";
 
-export type TxOrDb = Kysely<Database> | ControlledTransaction<Database, []>;
+export function createDb(connectionString: string): Kysely<Database> {
+  return new Kysely<Database>({
+    dialect: new PostgresDialect({
+      pool: new Pool({
+        connectionString,
+        max: 10,
+      }),
+    }),
+  });
+}
 
-const dialect = new PostgresDialect({
-  pool: new Pool({
-    connectionString: config.dbUrl,
-    max: 10,
-  }),
-});
+export const db = createDb(config.dbUrl);
 
-// Database interface is passed to Kysely's constructor, and from now on, Kysely
-// knows your database structure.
-// Dialect is passed to Kysely's constructor, and from now on, Kysely knows how
-// to communicate with your database.
-export const db = new Kysely<Database>({
-  dialect,
-});
+export type TxOrDb = Kysely<Database> | Transaction<Database>;
+
+export async function withTransaction<T>(
+  executor: TxOrDb,
+  callback: (trx: Transaction<Database>) => Promise<T>,
+): Promise<T> {
+  if (executor instanceof Transaction) {
+    return callback(executor);
+  }
+
+  return executor.transaction().execute(callback);
+}

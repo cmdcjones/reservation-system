@@ -1,5 +1,5 @@
 import express, { type Request, type Response } from "express";
-import { eventService } from "./services";
+import { createEventService } from "./services";
 
 export const app = express();
 
@@ -25,7 +25,7 @@ app.get(
     if (isNaN(id)) {
       throw new Error("Invalid ID");
     }
-    const event = await eventService.findById(id);
+    const event = await createEventService().findById(id);
     res.json({
       event,
     });

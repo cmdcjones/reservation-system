@@ -14,11 +14,17 @@ import { Database } from "../src/db/schema";
 
 type MigrationFlag = "reset" | undefined;
 
-async function handleMigrations() {
+const flag = process.argv[2] as MigrationFlag;
+const connection = process.argv[3] ?? undefined;
+
+export async function handleMigrations(
+  connection?: string,
+  flag?: MigrationFlag,
+) {
   const db = new Kysely<Database>({
     dialect: new PostgresDialect({
       pool: new Pool({
-        connectionString: process.env["DATABASE_URL"],
+        connectionString: connection ?? process.env["DATABASE_URL"],
       }),
     }),
   });
@@ -33,10 +39,8 @@ async function handleMigrations() {
     }),
   });
 
-  const flag = process.argv[2] as MigrationFlag;
-
   if (flag === "reset") {
-    await resetMigrations(db, migrator);
+    await resetMigrations(migrator);
   }
 
   await migrateToLatest(migrator);
@@ -62,7 +66,7 @@ async function migrateToLatest(migrator: Migrator) {
   }
 }
 
-async function resetMigrations(db: Kysely<Database>, migrator: Migrator) {
+async function resetMigrations(migrator: Migrator) {
   console.log("Resetting migrations");
   try {
     await migrator.migrateTo(NO_MIGRATIONS);
@@ -71,4 +75,4 @@ async function resetMigrations(db: Kysely<Database>, migrator: Migrator) {
   }
 }
 
-handleMigrations();
+handleMigrations(connection, flag);

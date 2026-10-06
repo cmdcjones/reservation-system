@@ -1,32 +1,30 @@
-import {
-  type Event,
-  type NewEvent,
-  type EventUpdate,
-  type TxOrDb,
-  db,
-} from "../db";
+import { type Event, type TxOrDb } from "../db";
+
+const eventColumns = ["id", "name", "venue", "deleted_at"] as const;
+
+export type EventRow = Pick<Event, (typeof eventColumns)[number]>;
 
 export const eventRepository = {
   async findEventById(
     id: number,
-    txOrDb: TxOrDb = db,
-  ): Promise<Partial<Event> | undefined> {
-    return await txOrDb
+    executor: TxOrDb,
+  ): Promise<EventRow | undefined> {
+    return await executor
       .selectFrom("event")
       .where("id", "=", id)
-      .select(["id", "name", "venue", "deleted_at"])
+      .select(eventColumns)
       .executeTakeFirst();
   },
 
   async insertOneEvent(
     name: string,
     venue: string,
-    txOrDb: TxOrDb = db,
-  ): Promise<NewEvent> {
-    return await txOrDb
+    executor: TxOrDb,
+  ): Promise<EventRow> {
+    return await executor
       .insertInto("event")
       .values({ name, venue })
-      .returning(["id", "name", "venue", "deleted_at"])
+      .returning(eventColumns)
       .executeTakeFirstOrThrow();
   },
 
@@ -34,13 +32,21 @@ export const eventRepository = {
     id: number,
     name: string,
     venue: string,
-    txOrDb: TxOrDb = db,
-  ): Promise<EventUpdate> {
-    return await txOrDb
+    executor: TxOrDb,
+  ): Promise<EventRow> {
+    return await executor
       .updateTable("event")
       .set({ name, venue })
       .where("id", "=", id)
-      .returning(["id", "name", "venue", "deleted_at"])
+      .returning(eventColumns)
       .executeTakeFirstOrThrow();
+  },
+
+  async deleteEvent(id: number, executor: TxOrDb): Promise<void> {
+    await executor
+      .updateTable("event")
+      .set({ deleted_at: new Date() })
+      .where("id", "=", id)
+      .execute();
   },
 };

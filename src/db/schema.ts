@@ -9,6 +9,9 @@ import type {
 export interface Database {
   user: UserTable;
   event: EventTable;
+  ticket_type: TicketTypeTable;
+  ticket_type_inventory: TicketTypeInventoryTable;
+  reservation: ReservationTable;
 }
 
 // <select, insert, update>

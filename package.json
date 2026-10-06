@@ -7,9 +7,10 @@
   "type": "module",
   "main": "/dist/src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "dev": "tsx ./src/main.ts",
     "db:migrate": "tsx ./kysely/migrator.ts",
+    "db:migrate-test": "tsx ./kysely/migrator.ts reset postgresql://user:pass@localhost:5433/test",
     "db:reset": "tsx ./kysely/migrator.ts reset",
     "db:create-migration": "tsx ./kysely/create-migration.ts"
   },

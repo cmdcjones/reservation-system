@@ -3,6 +3,7 @@ dotenv.config();
 
 export const config = {
   dbUrl: getEnv("DATABASE_URL"),
+  testDbUrl: "postgresql://user:pass@localhost:5433/test",
 };
 
 function getEnv(varName: string): string {
