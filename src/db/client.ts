@@ -8,7 +8,7 @@ export function createDb(connectionString: string): Kysely<Database> {
     dialect: new PostgresDialect({
       pool: new Pool({
         connectionString,
-        max: 10,
+        max: 20,
       }),
     }),
   });

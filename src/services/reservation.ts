@@ -26,19 +26,14 @@ export function createReservationService(executor: TxOrDb = db) {
             quantity: number,
             user_id: number,
             ticket_type_id: number,
-        ): Promise<ReservationRow> {
+        ): Promise<ReservationRow | undefined> {
             return await withTransaction(executor, async () => {
                 try {
-                    const ticketTypeInventory =
-                        await ticketTypeInventoryRepository.updateReservedByTicketTypeId(
-                            ticket_type_id,
-                            quantity,
-                            executor,
-                        );
-
-                    if (!ticketTypeInventory) {
-                        throw new Error("Ticket type sold out");
-                    }
+                    await ticketTypeInventoryRepository.updateReservedByTicketTypeId(
+                        ticket_type_id,
+                        quantity,
+                        executor,
+                    );
 
                     return await reservationRepository.insertOne(
                         quantity,
@@ -46,8 +41,11 @@ export function createReservationService(executor: TxOrDb = db) {
                         ticket_type_id,
                         executor,
                     );
-                } catch (error) {
-                    throw error;
+                } catch (error: any) {
+                    if (error.constraint === "ticket_type_inventory_check") {
+                      throw new Error("Ticket inventory sold out");
+                    }
+                    throw error
                 }
             });
         },
