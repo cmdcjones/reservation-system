@@ -11,9 +11,7 @@
     "target": "esnext",
     // For nodejs:
     "lib": ["esnext"],
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     // and npm install -D @types/node
 
     // Other Outputs
@@ -42,8 +40,8 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "include": ["./src/*"],
-  "exclude": ["./dist/*/**", "./node_modules/*/**"],
+  "exclude": ["./dist/*/**", "./node_modules/*/**"]
 }

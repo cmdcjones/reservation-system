@@ -5,11 +5,7 @@ import * as path from "path";
 import { Pool } from "pg";
 import { promises as fs } from "fs";
 import { Kysely, PostgresDialect } from "kysely";
-import {
-  FileMigrationProvider,
-  Migrator,
-  NO_MIGRATIONS,
-} from "kysely/migration";
+import { FileMigrationProvider, Migrator, NO_MIGRATIONS } from "kysely/migration";
 import { Database } from "../src/db/schema";
 
 type MigrationFlag = "reset" | undefined;
@@ -17,10 +13,7 @@ type MigrationFlag = "reset" | undefined;
 const flag = process.argv[2] as MigrationFlag;
 const connection = process.argv[3] ?? undefined;
 
-export async function handleMigrations(
-  connection?: string,
-  flag?: MigrationFlag,
-) {
+export async function handleMigrations(connection?: string, flag?: MigrationFlag) {
   const db = new Kysely<Database>({
     dialect: new PostgresDialect({
       pool: new Pool({

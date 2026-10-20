@@ -30,16 +30,14 @@ function executor(): ControlledTransaction<Database, []> {
 }
 
 test("should create one event row", async () => {
-  await expect(
-    createEventService(executor()).create("test", "test venue"),
-  ).resolves.toHaveProperty("id");
+  await expect(createEventService(executor()).create("test", "test venue")).resolves.toHaveProperty(
+    "id",
+  );
 });
 
 test("should throw when event is deleted", async () => {
   const eventService = createEventService(executor());
   const newEvent = await eventService.create("test", "test venue");
   await eventRepository.deleteEvent(newEvent.id, executor());
-  await expect(eventService.findById(newEvent.id)).rejects.toThrow(
-    "Event deleted",
-  );
+  await expect(eventService.findById(newEvent.id)).rejects.toThrow("Event deleted");
 });

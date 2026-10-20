@@ -50,12 +50,8 @@ export async function up(db: Kysely<any>): Promise<void> {
       .ifNotExists()
       .addColumn("id", "serial", (col) => col.primaryKey())
       .addColumn("status", sql`"reservation_status"`, (col) => col.notNull())
-      .addColumn("user_id", "integer", (col) =>
-        col.references("user.id").notNull(),
-      )
-      .addColumn("ticket_type_id", "integer", (col) =>
-        col.references("ticket_type.id").notNull(),
-      ),
+      .addColumn("user_id", "integer", (col) => col.references("user.id").notNull())
+      .addColumn("ticket_type_id", "integer", (col) => col.references("ticket_type.id").notNull()),
   )
     .addColumn("expires_at", "timestamp", (col) =>
       col.defaultTo(sql`now() + INTERVAL '15 minutes'`).notNull(),

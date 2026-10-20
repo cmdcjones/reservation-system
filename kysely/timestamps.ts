@@ -7,9 +7,7 @@ export function addTimestamps(
   options: { deletedAt?: boolean } = {},
 ): TableBuilder {
   const withTimes = table
-    .addColumn("created_at", "timestamp", (col) =>
-      col.defaultTo(sql`now()`).notNull(),
-    )
+    .addColumn("created_at", "timestamp", (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn("updated_at", "timestamp");
 
   if (!options.deletedAt) {
