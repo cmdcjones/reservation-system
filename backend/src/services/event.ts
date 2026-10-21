@@ -3,6 +3,11 @@ import { eventRepository, type EventRow } from "../repositories/event";
 
 export function createEventService(executor: TxOrDb = db) {
   return {
+    async findAll(): Promise<EventRow[]> {
+      const events = await eventRepository.findAll(executor);
+      return events;
+    },
+
     async findById(id: number): Promise<EventRow> {
       const event = await eventRepository.findEventById(id, executor);
       if (!event) {

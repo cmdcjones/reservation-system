@@ -9,7 +9,7 @@
   "scripts": {
     "fmt": "oxfmt",
     "test": "vitest",
-    "dev": "tsx ./src/main.ts",
+    "dev": "tsx watch ./src/main.ts --include './src/**/*'",
     "db:migrate": "tsx ./kysely/migrator.ts",
     "db:migrate-test": "tsx ./kysely/migrator.ts reset postgresql://user:pass@localhost:5433/test",
     "db:reset": "tsx ./kysely/migrator.ts reset",
@@ -22,10 +22,12 @@
     "pg": "^8.23.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.3",
     "@types/pg": "^8.23.1",
     "@types/supertest": "^7.2.1",
+    "cors": "^2.8.6",
     "oxfmt": "^0.74.0",
     "supertest": "^7.3.1",
     "tsx": "^4.23.15",

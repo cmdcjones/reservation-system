@@ -1,11 +1,31 @@
-import { useState } from 'preact/hooks'
-import heroImg from './assets/hero.png'
-import preactLogo from './assets/preact.svg'
-import viteLogo from './assets/vite.svg'
-import './app.css'
+import { useEffect, useState } from "preact/hooks";
+import useSWR from "swr";
+
+import heroImg from "./assets/hero.png";
+import preactLogo from "./assets/preact.svg";
+import viteLogo from "./assets/vite.svg";
+import "./app.css";
+import { useBoolVariation, useLDClient } from "@launchdarkly/react-sdk";
+
+const BACKEND_URL = "http://localhost:3000";
+const fetcher = (key: string) => fetch(key).then((res) => res.json());
 
 export function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const { data, error, isLoading } = useSWR(`${BACKEND_URL}/events`, fetcher);
+  const newBannerFlag = useBoolVariation("new-banner", false);
+  const ldClient = useLDClient();
+
+  const context = {
+    kind: "user",
+    key: "example-user-key",
+    name: "Sandy",
+    email: "sandy@example.com",
+  };
+
+  useEffect(() => {
+    ldClient.identify(context);
+  }, []);
 
   return (
     <>
@@ -17,6 +37,7 @@ export function App() {
         </div>
         <div>
           <h1>Get started</h1>
+          <h1>New banner initialized: {newBannerFlag ? "yes" : "no"}</h1>
           <p>
             Edit <code>src/app.tsx</code> and save to test <code>HMR</code>
           </p>
@@ -32,73 +53,19 @@ export function App() {
 
       <div class="ticks"></div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg class="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img class="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://preactjs.com/" target="_blank">
-                <img class="button-icon" src={preactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg class="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg class="button-icon" role="presentation" aria-hidden="true">
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div class="ticks"></div>
       <section id="spacer"></section>
+      {data && (
+        <div>
+          Here are the current events:{" "}
+          {data.events.map((e) => (
+            <>
+              <div>Name: {e.name}</div>
+              <div>Venue: {e.venue}</div>
+              <div id="spacer"></div>
+            </>
+          ))}{" "}
+        </div>
+      )}
     </>
-  )
+  );
 }

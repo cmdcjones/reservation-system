@@ -1,4 +1,6 @@
 import express, { type Request, type Response } from "express";
+import cors from "cors";
+
 import { createEventService, createReservationService } from "./services";
 import type { ReservationRow } from "./repositories/reservation";
 import type { TxOrDb } from "./db";
@@ -13,8 +15,9 @@ interface GetEventParams {
   eventId: string;
 }
 
-export const app = express();
 export function createApp(executor?: TxOrDb) {
+  const app = express();
+  app.use(cors());
   app.use(express.json());
 
   app.get("/health", async (_: Request, res: Response) => {
@@ -22,26 +25,33 @@ export function createApp(executor?: TxOrDb) {
   });
 
   app.get("/events", async (_: Request, res: Response) => {
-    res.json({ events: [] });
+    const events = await createEventService(executor).findAll();
+    res.json({ events });
   });
 
-  app.get("/events/:eventId", async (req: Request<GetEventParams>, res: Response) => {
-    const eventId = req.params["eventId"];
+  app.get(
+    "/events/:eventId",
+    async (req: Request<GetEventParams>, res: Response) => {
+      const eventId = req.params["eventId"];
 
-    const id = parseInt(eventId);
+      const id = parseInt(eventId);
 
-    if (isNaN(id)) {
-      throw new Error("Invalid ID");
-    }
-    const event = await createEventService(executor).findById(id);
-    res.json({
-      event,
-    });
-  });
+      if (isNaN(id)) {
+        throw new Error("Invalid ID");
+      }
+      const event = await createEventService(executor).findById(id);
+      res.json({
+        event,
+      });
+    },
+  );
 
   app.post(
     "/reservations",
-    async (req: Request<CreateReservationInput>, res: Response<ReservationRow> | any) => {
+    async (
+      req: Request<CreateReservationInput>,
+      res: Response<ReservationRow> | any,
+    ) => {
       try {
         const { user_id, ticket_type_id, quantity } = req.body;
         const reservation = await createReservationService(executor).create(

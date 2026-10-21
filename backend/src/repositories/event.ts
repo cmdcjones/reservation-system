@@ -5,7 +5,18 @@ const eventColumns = ["id", "name", "venue", "deleted_at"] as const;
 export type EventRow = Pick<Event, (typeof eventColumns)[number]>;
 
 export const eventRepository = {
-  async findEventById(id: number, executor: TxOrDb): Promise<EventRow | undefined> {
+  async findAll(executor: TxOrDb): Promise<EventRow[]> {
+    return await executor
+      .selectFrom("event")
+      .where("deleted_at", "is", null)
+      .select(eventColumns)
+      .execute();
+  },
+
+  async findEventById(
+    id: number,
+    executor: TxOrDb,
+  ): Promise<EventRow | undefined> {
     return await executor
       .selectFrom("event")
       .where("id", "=", id)
@@ -13,7 +24,11 @@ export const eventRepository = {
       .executeTakeFirst();
   },
 
-  async insertOneEvent(name: string, venue: string, executor: TxOrDb): Promise<EventRow> {
+  async insertOneEvent(
+    name: string,
+    venue: string,
+    executor: TxOrDb,
+  ): Promise<EventRow> {
     return await executor
       .insertInto("event")
       .values({ name, venue })
@@ -21,7 +36,12 @@ export const eventRepository = {
       .executeTakeFirstOrThrow();
   },
 
-  async updateEvent(id: number, name: string, venue: string, executor: TxOrDb): Promise<EventRow> {
+  async updateEvent(
+    id: number,
+    name: string,
+    venue: string,
+    executor: TxOrDb,
+  ): Promise<EventRow> {
     return await executor
       .updateTable("event")
       .set({ name, venue })

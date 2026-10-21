@@ -9,7 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "preact": "^10.29.8"
+    "@launchdarkly/react-sdk": "^4.1.28",
+    "preact": "^10.29.8",
+    "swr": "^2.5.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
